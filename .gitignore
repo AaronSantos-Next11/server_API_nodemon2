@@ -1,0 +1,8 @@
+# Modulos de JS
+node_modules/
+
+# Archivos o carpetas ocultas
+.DS_Store
+
+# Variables de entorno
+.env
