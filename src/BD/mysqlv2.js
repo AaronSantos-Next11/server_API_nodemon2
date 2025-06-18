@@ -104,6 +104,11 @@ async function login(tabla, data) {
             `SELECT * FROM ?? WHERE email = ?`,
             [tabla, user]
         );
+        
+        /*  
+        ! Cambia esta si quieres usar el nombre, embes del correo como "user"
+        const [rows] = await conexion.query( `SELECT * FROM ?? WHERE nombre = ?`, [tabla, user]);
+        */
 
         if (rows.length === 0) {
             return { status: false, mensaje: 'Usuario no encontrado' };
