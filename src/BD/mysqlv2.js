@@ -54,7 +54,7 @@ async function insertar(tabla, data) {
     return result;
 }
 
-// Función para actualizar un registro
+//* Función para actualizar un registro
 async function actualizar(tabla, data) {
     const { id, ...datosActualizados } = data;
     const [result] = await conexion.query(`UPDATE ${tabla} SET ? WHERE id = ?`, [datosActualizados, id]);
@@ -89,6 +89,46 @@ async function agregar(tabla, data) {
         }
     }
 }
+
+
+async function eliminar(tabla, id) {
+    const [result] = await conexion.query(`DELETE FROM ${tabla} WHERE id = ?`, [id]);
+    return result;
+}
+
+async function login(tabla, data) {
+    const { user, password } = data;
+    
+    try {
+        const [rows] = await conexion.query(
+            `SELECT * FROM ?? WHERE email = ?`,
+            [tabla, user]
+        );
+        
+        /*  
+        ! Cambia esta si quieres usar el nombre, embes del correo como "user"
+        const [rows] = await conexion.query( `SELECT * FROM ?? WHERE nombre = ?`, [tabla, user]);
+        */
+       
+       if (rows.length === 0) {
+           return { status: false, mensaje: 'Usuario no encontrado' };
+        }
+        
+        const usuarioBD = rows[0];
+        const coincide = await bcrypt.compare(password, usuarioBD.pw);
+        
+        if (coincide) {
+            return { status: true, user: usuarioBD };
+        } else {
+            return { status: false, mensaje: 'Contraseña incorrecta' };
+        }
+    } catch (error) {
+        console.error('Error en login:', error);
+        return { status: false, mensaje: 'Error del servidor' };
+    }
+}
+
+//* Consultas de la carpeta "luces": 
 
 async function agregar_dispositivo(tabla, data) {
     const id = parseInt(data.id);
@@ -126,43 +166,34 @@ async function agregar_dispositivo(tabla, data) {
 
 }
 
-
-async function eliminar(tabla, id) {
-    const [result] = await conexion.query(`DELETE FROM ${tabla} WHERE id = ?`, [id]);
-    return result;
-}
-
-async function login(tabla, data) {
-    const { user, password } = data;
-
+async function actualizar_status(tabla, data) {
+    const { nombre_dispositivo, status } = data;
+    
     try {
-        const [rows] = await conexion.query(
-            `SELECT * FROM ?? WHERE email = ?`,
-            [tabla, user]
+        // Verificar que el dispositivo existe
+        const [rows] = await conexion.query(`SELECT * FROM ${tabla} WHERE nombre_dispositivo = ?`, [nombre_dispositivo]);
+        
+        if (rows.length === 0) {
+            return { status: false, mensaje: 'Dispositivo no encontrado' };
+        }
+        
+        // Actualizar solo el status del dispositivo
+        const [result] = await conexion.query(
+            `UPDATE ${tabla} SET status = ? WHERE nombre_dispositivo = ?`, 
+            [status, nombre_dispositivo]
         );
         
-        /*  
-        ! Cambia esta si quieres usar el nombre, embes del correo como "user"
-        const [rows] = await conexion.query( `SELECT * FROM ?? WHERE nombre = ?`, [tabla, user]);
-        */
-
-        if (rows.length === 0) {
-            return { status: false, mensaje: 'Usuario no encontrado' };
-        }
-
-        const usuarioBD = rows[0];
-        const coincide = await bcrypt.compare(password, usuarioBD.pw);
-
-        if (coincide) {
-            return { status: true, user: usuarioBD };
+        if (result.affectedRows > 0) {
+            return { status: true, mensaje: 'Status actualizado correctamente', resultado: result };
         } else {
-            return { status: false, mensaje: 'Contraseña incorrecta' };
+            return { status: false, mensaje: 'No se pudo actualizar el status' };
         }
+        
     } catch (error) {
-        console.error('Error en login:', error);
-        return { status: false, mensaje: 'Error del servidor' };
+        console.error('Error al actualizar status:', error);
+        return { status: false, mensaje: 'Error al actualizar el status del dispositivo' };
     }
 }
 
 
-module.exports = { uno, todos, agregar, eliminar, login, agregar_dispositivo };
+module.exports = { uno, todos, agregar, eliminar, login, agregar_dispositivo, actualizar_status };

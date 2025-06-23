@@ -26,6 +26,16 @@ function eliminar (body){
     return bd.eliminar(TABLA,body)
 }
 
+// Midleware para "Luces"
+
+function actualizar_status(body) {
+    return bd.actualizar_status(TABLA, body);
+}
+
 module.exports={
-    todos,uno,agregar,eliminar
+    todos,
+    uno,
+    agregar,
+    eliminar, 
+    actualizar_status
 }

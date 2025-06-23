@@ -44,4 +44,19 @@ router.delete('/eliminar', async function (req, res) {
     }
 });
 
+// Antes del module.exports
+router.put('/actualizar_status', async function (req, res) {
+    try {
+        const resultado = await controlador.actualizar_status(req.body);
+        
+        if (resultado.status) {
+            respuesta.success(req, res, 200, resultado.mensaje, resultado.resultado);
+        } else {
+            respuesta.error(req, res, 400, resultado.mensaje);
+        }
+    } catch (error) {
+        respuesta.error(req, res, 500, 'Error al actualizar status', error);
+    }
+});
+
 module.exports = router
