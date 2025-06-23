@@ -1,17 +1,22 @@
 const express = require('express');
 const config = require('./config');
-const clientes = require('./molulos/clientes/rutas')
-const usuario = require('./molulos/users/rutas')
-const luces = require('./molulos/luces/rutas')
+const clientes = require('./molulos/clientes/rutas');
+const usuario = require('./molulos/users/rutas');
+const luces = require('./molulos/luces/rutas');
+const cors = require('cors');
+
 // const puertas = require('./molulos/puertas/rutas')
 
 const app = express();
 app.use(express.json());
 
-//Configuracion
+// Configuracion
 app.set('port', config.app.port);
 
-//Rutas
+// Permitir conexión externa usando "cors"
+app.use(cors());
+
+// Rutas
 app.use('/api/clientes',clientes)
 app.use('/api/usuario',usuario)
 app.use('/api/luces', luces)
