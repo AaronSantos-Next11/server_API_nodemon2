@@ -90,6 +90,42 @@ async function agregar(tabla, data) {
     }
 }
 
+async function agregar_dispositivo(tabla, data) {
+    const id = parseInt(data.id);
+
+    if (id === 0) {
+
+        try {
+            console.log('Agregando nuevo dispositivo:', data.nombre_dispositivo);
+
+            //! Que no se te olvide la coma "," despues de la consulta
+            const [rows] = await conexion.query(`SELECT * FROM ${tabla} WHERE nombre_dispositivo = ?`, [data.nombre_dispositivo]);
+
+            if (rows.length > 0) {
+                console.log('Dispositivo registrado');
+                return { status: false, mensaje: 'El dispositivo ha sido registrado con exito' };
+            }
+
+            const result = await insertar(tabla, data);
+            return { status: true, resultado: result };
+
+        } catch (error) {
+            console.error('Error al insertar dispositivo:', error); // Agregado para debugging
+            return { status: false, mensaje: 'Error al insertar el registro' };
+        }
+        
+    } else {
+        try {
+            const result = await actualizar(tabla, data);
+            return { status: true, resultado: result };
+        } catch (error) {
+            console.error('Error al actualizar dispositivo:', error); // Agregado para debugging
+            return { status: false, mensaje: 'Error al actualizar el registro' };   
+        }
+    }
+
+}
+
 
 async function eliminar(tabla, id) {
     const [result] = await conexion.query(`DELETE FROM ${tabla} WHERE id = ?`, [id]);
@@ -129,4 +165,4 @@ async function login(tabla, data) {
 }
 
 
-module.exports = { uno, todos, agregar, eliminar, login };
+module.exports = { uno, todos, agregar, eliminar, login, agregar_dispositivo };
