@@ -166,7 +166,7 @@ async function agregar_dispositivo(tabla, data) {
 
 }
 
-async function actualizar_status(tabla, data) {
+async function actualizar_status_dispositivo(tabla, data) {
     const { nombre_dispositivo, status } = data;
     
     try {
@@ -195,5 +195,79 @@ async function actualizar_status(tabla, data) {
     }
 }
 
+async function agregar_puerta(tabla, data) {
+    const id = parseInt(data.id);
 
-module.exports = { uno, todos, agregar, eliminar, login, agregar_dispositivo, actualizar_status };
+    if (id === 0) {
+
+        try {
+            console.log('Agregando nueva puerta:', data.nombre_puerta);
+
+            //! Que no se te olvide la coma "," despues de la consulta
+            const [rows] = await conexion.query(`SELECT * FROM ${tabla} WHERE nombre_puerta = ?`, [data.nombre_puerta]);
+
+            if (rows.length > 0) {
+                console.log('Puerta registrada');
+                return { status: false, mensaje: 'La puerta ha sido registrada con exito' };
+            }
+
+            const result = await insertar(tabla, data);
+            return { status: true, resultado: result };
+
+        } catch (error) {
+            console.error('Error al insertar nueva puerta:', error); // Agregado para debugging
+            return { status: false, mensaje: 'Error al insertar el registro' };
+        }
+        
+    } else {
+        try {
+            const result = await actualizar(tabla, data);
+            return { status: true, resultado: result };
+        } catch (error) {
+            console.error('Error al actualizar la informacion de la puerta:', error); // Agregado para debugging
+            return { status: false, mensaje: 'Error al actualizar el registro' };   
+        }
+    }
+}
+
+async function actualizar_status_puerta(tabla, data) {
+
+    const { nombre_puerta, status } = data;
+    
+    try {
+        // Verificar que la puerta existe
+        const [rows] = await conexion.query(`SELECT * FROM ${tabla} WHERE nombre_puerta = ?`, [nombre_puerta]);
+        
+        if (rows.length === 0) {
+            return { status: false, mensaje: 'La informacion de la puerta no ha sido encontrada' };
+        }
+        
+        // Actualizar solo el status de la puerta
+        const [result] = await conexion.query(
+            `UPDATE ${tabla} SET status = ? WHERE nombre_puerta = ?`, 
+            [status, nombre_puerta]
+        );
+        
+        if (result.affectedRows > 0) {
+            return { status: true, mensaje: 'Status actualizado correctamente', resultado: result };
+        } else {
+            return { status: false, mensaje: 'No se pudo actualizar el status' };
+        }
+        
+    } catch (error) {
+        console.error('Error al actualizar status:', error);
+        return { status: false, mensaje: 'Error al actualizar el status de la puerta' };
+    }
+}
+
+module.exports = {
+    uno, 
+    todos,
+    agregar,
+    eliminar, 
+    login, 
+    agregar_dispositivo,
+    actualizar_status_dispositivo,
+    agregar_puerta,
+    actualizar_status_puerta
+};

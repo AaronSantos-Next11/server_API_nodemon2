@@ -3,9 +3,9 @@ const config = require('./config');
 const clientes = require('./molulos/clientes/rutas');
 const usuario = require('./molulos/users/rutas');
 const luces = require('./molulos/luces/rutas');
-const cors = require('cors');
+const puertas = require('./molulos/puertas/rutas')
 
-// const puertas = require('./molulos/puertas/rutas')
+const cors = require('cors');
 
 const app = express();
 app.use(express.json());
@@ -20,6 +20,10 @@ app.use(cors());
 app.use('/api/clientes',clientes)
 app.use('/api/usuario',usuario)
 app.use('/api/luces', luces)
-// app.use('/api/puertas', puertas)
+app.use('/api/puertas', puertas)
 
 module.exports = app;
+
+/* 
+! Te falta crear la ruta de la API llamada PUERTA
+*/
