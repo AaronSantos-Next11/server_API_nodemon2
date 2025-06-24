@@ -23,7 +23,3 @@ app.use('/api/luces', luces)
 app.use('/api/puertas', puertas)
 
 module.exports = app;
-
-/* 
-! Te falta crear la ruta de la API llamada PUERTA
-*/
