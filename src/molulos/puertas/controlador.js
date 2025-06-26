@@ -26,14 +26,22 @@ function eliminar (body){
     return bd.eliminar(TABLA,body)
 }
 
+// Midleware para "Puertas"
+
 function actualizar_status(body) {
     return bd.actualizar_status_puerta(TABLA, body);
 }
+
+function actualizar(body) {
+    return bd.actualizar(TABLA, body);
+}
+
 
 module.exports={
     todos,
     uno,
     agregar,
     eliminar, 
-    actualizar_status
+    actualizar_status,
+    actualizar
 }

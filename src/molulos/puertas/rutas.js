@@ -35,6 +35,16 @@ router.post('/agregar', async function (req, res) {
     }
 });
 
+router.post('/actualizar', async (req, res) => {
+    try {
+        const data = await controlador.actualizar(req.body);
+        respuesta.success(req, res, 200, 'Puerta actualizada correctamente');
+    } catch (e) {
+        respuesta.error(req, res, 500, 'Error al actualizar puerta', e);
+    }
+});
+
+
 router.delete('/eliminar', async function (req, res) {
     try {
       const items = await controlador.eliminar(req.body); // Obtine los datos que se han eliminado
@@ -45,7 +55,7 @@ router.delete('/eliminar', async function (req, res) {
 });
 
 // Antes del module.exports
-router.patch('/actualizar_status', async function (req, res) {
+router.post('/actualizar_status', async function (req, res) {
     try {
         const resultado = await controlador.actualizar_status(req.body);
         

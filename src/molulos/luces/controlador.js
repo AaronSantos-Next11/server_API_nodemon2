@@ -32,10 +32,16 @@ function actualizar_status(body) {
     return bd.actualizar_status_dispositivo(TABLA, body);
 }
 
+function actualizar(body) {
+    return bd.actualizar(TABLA, body);
+}
+
+
 module.exports={
     todos,
     uno,
     agregar,
     eliminar, 
-    actualizar_status
+    actualizar_status,
+    actualizar
 }
